@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-# lib = File.expand_path("../lib", __FILE__)
-# $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-# require "version"
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require "version"
 
 Gem::Specification.new do |s|
   s.name        = 'gitgem'
-  s.version     = '0.0.5'
+  s.version     = GitGem::VERSION
   s.date        = '2018-01-10'
   s.summary     = "Install gem from git repo !"
   s.description = "Install gem from git repo !"
   s.authors     = ["saitjr"]
   s.email       = 'tangjr.work@gmail.com'
-  s.files       = ["lib/gitgem/action.rb", "bin/gitgem"]
+  s.files       = [Dir.glob("lib/*"), Dir.glob("lib/gitgem/*"), "bin/gitgem"]
   s.homepage    = 'http://rubygems.org/gems/gitgem'
   s.license     = 'MIT'
 
