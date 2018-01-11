@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# -*- coding: UTF-8 -*-
+
+$LOAD_PATH.push File.expand_path("../../lib", __FILE__)
+
+require 'optparse'
+
+require 'gitgem/action'
+
+ARGV << '-h' if ARGV.empty?
+action = ARGV.shift unless ARGV.first.start_with?("-")
+
+options = {}
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Here is help messages of the command line tool.\nAction Suppored: 'add', 'remove', 'install', 'uninstall'."
+
+  opts.on('-r REPO', '--repo Repo', 'Specify git repo') do |value|
+    options[:repo] = value
+  end
+
+  opts.on('-a ALIAS', '--alias Alias', 'Make Alias') do |value|
+    options[:alias] = value
+  end
+
+  opts.on('-g GEM', '--gem Gem', 'Install GEM') do |value|
+    argvs = value.split("/")
+    options[:alias] = argvs.shift
+    options[:gem_dir] = argvs.join("/")
+  end
+
+  opts.on('-h', '--help', 'Show this message') { puts opts; exit }
+  opts.on('-v', '--version', 'Show version') { exit }
+end.parse!
+
+case action
+when 'add'
+  repo = options[:repo]
+  repo_alias = options[:alias]
+  GitGem::Action.add(repo_alias, repo)
+when 'remove'
+  repo = options[:alias]
+  GitGem::Action.remove(repo)
+when 'install'
+  repo = options[:alias]
+  gem_dir = options[:gem_dir]
+  GitGem::Action.install(repo, gem_dir)
+when 'uninstall'
+  repo = options[:alias]
+  gem_dir = options[:gem_dir]
+  GitGem::Action.uninstall(repo, gem_dir)
+else
+  abort("Could not find action named '#{action}'")
+end
