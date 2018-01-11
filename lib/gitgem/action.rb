@@ -7,7 +7,7 @@ require 'fileutils'
 module GitGem
   module Action
     class << self
-      def add(repo_alias = nil, repo)
+      def add(repo_alias, repo)
         repo_alias = repo if repo_alias.nil? || repo_alias.empty?
 
         abort("Alias could not start with '.'") if repo_alias.start_with?(".")
@@ -41,8 +41,16 @@ module GitGem
       def install(repo_alias, gem_dir, bindir)
         abort("Please specify alias like alias/gem") if repo_alias.nil? || repo_alias.empty?
         result = read_alias(repo_alias)
-        abort("Could not find alias named #{repo_alias}, please check again.") if result.nil?
-        repo = result.gsub("#{repo_alias}=", "")
+        repo = ""
+        if result.nil?
+          printf "Could not found repo named #{repo_alias}, please enter? (xxx@xxx.git): "
+          repo = STDIN.gets
+          add(repo_alias, repo)
+        else
+          repo = result.gsub("#{repo_alias}=", "")
+        end
+        abort("Error git repo format #{repo_alias}, please check again.") unless repo.end_with?(".git")
+
 
         alias_dir = File.join(base_dir, repo_alias)
         repo_dir = File.join(alias_dir, File.basename(repo, ".git"))
