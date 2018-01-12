@@ -50,6 +50,30 @@ command :remove do |c|
   end
 end
 
+desc "Update gem from git repo"
+arg_name '-a alias -g gem -n bindir'
+command :update do |c|
+
+  c.desc 'Alias of git repo'
+  c.arg_name 'alias'
+  c.flag [:a, :alias]
+
+  c.desc 'Name of gem'
+  c.arg_name 'gitgem'
+  c.flag [:g, :gem]
+
+  c.desc 'dir will install'
+  c.arg_name '/usr/local/bin'
+  c.flag [:n, :bindir]
+
+  c.action do |_, opts, _|
+    repo = opts[:a]
+    gem_name = opts[:g]
+    bindir = opts[:n]
+    GitGem::Action.update(repo, gem_name, bindir)
+  end
+end
+
 desc "Install gem from git repo"
 arg_name '-a alias -g gem -n bindir'
 command :install do |c|

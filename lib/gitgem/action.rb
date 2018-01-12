@@ -19,7 +19,7 @@ module GitGem
         unless result.nil?
           puts "#{repo_alias} is already exist: #{result}"
           printf "replace? (y/n): "
-          input = STDIN.gets
+          input = STDIN.gets.chomp
 
           if input.start_with?("y")
             remove(repo_alias)
@@ -38,13 +38,19 @@ module GitGem
         system("sed -i '' '/#{repo_alias}=/d' #{alias_path}")
       end
 
+      def update(repo_alias, gem_name, bindir)
+        # system("sudo gem unisntall #{gem_name} -n #{bindir}")
+        uninstall(repo_alias, gem_name, bindir)
+        install(repo_alias, gem_name, bindir)
+      end
+
       def install(repo_alias, gem_dir, bindir)
         abort("Please specify alias like alias/gem") if repo_alias.nil? || repo_alias.empty?
         result = read_alias(repo_alias)
         repo = ""
         if result.nil?
           printf "Could not found repo named #{repo_alias}, please enter? (xxx@xxx.git): "
-          repo = STDIN.gets
+          repo = STDIN.gets.chomp
           add(repo_alias, repo)
         else
           repo = result.gsub("#{repo_alias}=", "")
@@ -95,20 +101,22 @@ module GitGem
       end
 
       def uninstall(repo_alias, gem_name, bindir)
-        abort("Please specify alias like alias/gem") if repo_alias.nil? || repo_alias.empty?
-        result = read_alias(repo_alias)
-        abort("Could not find alias named #{repo_alias}, please check again.") if result.nil?
-        repo = result.gsub("#{repo_alias}=", "")
-
-        alias_dir = File.join(base_dir, repo_alias)
-        repo_dir = File.join(alias_dir, File.basename(repo, ".git"))
-
-        gems = Dir.glob(File.join(repo_dir, gem_dir, "*.gem"))
-        abort("Could not find gem in #{File.join(repo_dir, gem_dir)}") if gems.nil? || gems.empty?
-
+        # abort("Please specify alias like alias/gem") if repo_alias.nil? || repo_alias.empty?
+        # result = read_alias(repo_alias)
+        # abort("Could not find alias named #{repo_alias}, please check again.") if result.nil?
+        # repo = result.gsub("#{repo_alias}=", "")
+        #
+        # alias_dir = File.join(base_dir, repo_alias)
+        # repo_dir = File.join(alias_dir, File.basename(repo, ".git"))
+        #
+        # gems = Dir.glob(File.join(repo_dir, gem_dir, "*.gem"))
+        # abort("Could not find gem in #{File.join(repo_dir, gem_dir)}") if gems.nil? || gems.empty?
+        #
+        # bin = "-n #{bindir}" unless bindir.nil?
+        # gem_name = File.basename(gems.first, ".gem").split("-")[0...-1].join("-")
+        # system("sudo gem unisntall #{gem_name} #{bin}")
         bin = "-n #{bindir}" unless bindir.nil?
-        gem_name = File.basename(gems.first, ".gem").split("-")[0...-1].join("-")
-        system("sudo gem unisntall #{gem_name} #{bin}")
+        system("sudo gem uninstall #{gem_name} #{bin}")
       end
 
       private
