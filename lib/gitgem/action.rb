@@ -62,7 +62,12 @@ module GitGem
         repo_dir = File.join(alias_dir, File.basename(repo, ".git"))
         pwd = Dir.pwd
 
-        unless File.exist?(alias_dir)
+        # 如果目录是空的，则删除，说明第一次拉取的时候失败了
+        if Dir[alias_dir].empty
+          FileUtils.rm_rf(File.dirname(alias_dir))
+        end
+
+        unless File.exist?(alias_dir) ||
           Dir.chdir(base_dir)
           FileUtils.mkdir_p(alias_dir)
           Dir.chdir(alias_dir)
